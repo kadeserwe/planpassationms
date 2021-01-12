@@ -14,7 +14,21 @@
     <property name="uuidType" value="uuid" dbms="h2, postgresql"/>
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112112631_added_entity_Historique.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112112731_added_entity_ModePassation.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112112831_added_entity_ParamDate.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112112931_added_entity_PlanPassation.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112113031_added_entity_Realisation.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112113131_added_entity_SygService.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112113231_added_entity_SygSourceFinancement.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112113331_added_entity_SygTypeMarche.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112113431_added_entity_SygTypeService.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112113531_added_entity_SygTypeSourceFinancement.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20210112112631_added_entity_constraints_Historique.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112113031_added_entity_constraints_Realisation.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112113131_added_entity_constraints_SygService.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210112113231_added_entity_constraints_SygSourceFinancement.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>
