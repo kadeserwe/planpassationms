@@ -93,6 +93,10 @@
     {
       "fieldName": "commentairePublication",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "numPlan",
+      "fieldType": "String"
     }
   ],
   "relationships": [],
@@ -107,5 +111,7 @@
   "embedded": false,
   "clientRootFolder": "planpassationms",
   "applications": "*",
-  "microserviceName": "planpassationms"
+  "microserviceName": "planpassationms",
+  "searchEngine": false,
+  "databaseType": "sql"
 }

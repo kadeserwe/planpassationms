@@ -104,6 +104,9 @@ public class PlanPassation implements Serializable {
     @Column(name = "commentaire_publication")
     private String commentairePublication;
 
+    @Column(name = "num_plan")
+    private String numPlan;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
@@ -437,6 +440,19 @@ public class PlanPassation implements Serializable {
     public void setCommentairePublication(String commentairePublication) {
         this.commentairePublication = commentairePublication;
     }
+
+    public String getNumPlan() {
+        return numPlan;
+    }
+
+    public PlanPassation numPlan(String numPlan) {
+        this.numPlan = numPlan;
+        return this;
+    }
+
+    public void setNumPlan(String numPlan) {
+        this.numPlan = numPlan;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -485,6 +501,7 @@ public class PlanPassation implements Serializable {
             ", dateRejet='" + getDateRejet() + "'" +
             ", datePublication='" + getDatePublication() + "'" +
             ", commentairePublication='" + getCommentairePublication() + "'" +
+            ", numPlan='" + getNumPlan() + "'" +
             "}";
     }
 }

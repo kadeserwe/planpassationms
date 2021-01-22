@@ -90,6 +90,9 @@
             <column name="commentaire_publication" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+            <column name="num_plan" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
     </changeSet>
@@ -138,6 +141,7 @@
             <column name="date_rejet" type="date"/>
             <column name="date_publication" type="date"/>
             <column name="commentaire_publication" type="string"/>
+            <column name="num_plan" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

@@ -64,6 +64,8 @@ public class PlanPassationDTO implements Serializable {
 
     private String commentairePublication;
 
+    private String numPlan;
+
     
     public Long getId() {
         return id;
@@ -273,6 +275,14 @@ public class PlanPassationDTO implements Serializable {
         this.commentairePublication = commentairePublication;
     }
 
+    public String getNumPlan() {
+        return numPlan;
+    }
+
+    public void setNumPlan(String numPlan) {
+        this.numPlan = numPlan;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -317,6 +327,7 @@ public class PlanPassationDTO implements Serializable {
             ", dateRejet='" + getDateRejet() + "'" +
             ", datePublication='" + getDatePublication() + "'" +
             ", commentairePublication='" + getCommentairePublication() + "'" +
+            ", numPlan='" + getNumPlan() + "'" +
             "}";
     }
 }
