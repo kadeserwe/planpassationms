@@ -3,9 +3,6 @@ package sn.ssi.sigmap.web.rest;
 import sn.ssi.sigmap.PlanpassationmsApp;
 import sn.ssi.sigmap.domain.PlanPassation;
 import sn.ssi.sigmap.repository.PlanPassationRepository;
-import sn.ssi.sigmap.service.PlanPassationService;
-import sn.ssi.sigmap.service.dto.PlanPassationDTO;
-import sn.ssi.sigmap.service.mapper.PlanPassationMapper;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -111,12 +108,6 @@ public class PlanPassationResourceIT {
     private PlanPassationRepository planPassationRepository;
 
     @Autowired
-    private PlanPassationMapper planPassationMapper;
-
-    @Autowired
-    private PlanPassationService planPassationService;
-
-    @Autowired
     private EntityManager em;
 
     @Autowired
@@ -205,10 +196,9 @@ public class PlanPassationResourceIT {
     public void createPlanPassation() throws Exception {
         int databaseSizeBeforeCreate = planPassationRepository.findAll().size();
         // Create the PlanPassation
-        PlanPassationDTO planPassationDTO = planPassationMapper.toDto(planPassation);
         restPlanPassationMockMvc.perform(post("/api/plan-passations")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(planPassationDTO)))
+            .content(TestUtil.convertObjectToJsonBytes(planPassation)))
             .andExpect(status().isCreated());
 
         // Validate the PlanPassation in the database
@@ -249,12 +239,11 @@ public class PlanPassationResourceIT {
 
         // Create the PlanPassation with an existing ID
         planPassation.setId(1L);
-        PlanPassationDTO planPassationDTO = planPassationMapper.toDto(planPassation);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPlanPassationMockMvc.perform(post("/api/plan-passations")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(planPassationDTO)))
+            .content(TestUtil.convertObjectToJsonBytes(planPassation)))
             .andExpect(status().isBadRequest());
 
         // Validate the PlanPassation in the database
@@ -271,12 +260,11 @@ public class PlanPassationResourceIT {
         planPassation.setAnnee(null);
 
         // Create the PlanPassation, which fails.
-        PlanPassationDTO planPassationDTO = planPassationMapper.toDto(planPassation);
 
 
         restPlanPassationMockMvc.perform(post("/api/plan-passations")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(planPassationDTO)))
+            .content(TestUtil.convertObjectToJsonBytes(planPassation)))
             .andExpect(status().isBadRequest());
 
         List<PlanPassation> planPassationList = planPassationRepository.findAll();
@@ -291,12 +279,11 @@ public class PlanPassationResourceIT {
         planPassation.setDateCreation(null);
 
         // Create the PlanPassation, which fails.
-        PlanPassationDTO planPassationDTO = planPassationMapper.toDto(planPassation);
 
 
         restPlanPassationMockMvc.perform(post("/api/plan-passations")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(planPassationDTO)))
+            .content(TestUtil.convertObjectToJsonBytes(planPassation)))
             .andExpect(status().isBadRequest());
 
         List<PlanPassation> planPassationList = planPassationRepository.findAll();
@@ -424,11 +411,10 @@ public class PlanPassationResourceIT {
             .dateRejet(UPDATED_DATE_REJET)
             .datePublication(UPDATED_DATE_PUBLICATION)
             .commentairePublication(UPDATED_COMMENTAIRE_PUBLICATION);
-        PlanPassationDTO planPassationDTO = planPassationMapper.toDto(updatedPlanPassation);
 
         restPlanPassationMockMvc.perform(put("/api/plan-passations")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(planPassationDTO)))
+            .content(TestUtil.convertObjectToJsonBytes(updatedPlanPassation)))
             .andExpect(status().isOk());
 
         // Validate the PlanPassation in the database
@@ -467,13 +453,10 @@ public class PlanPassationResourceIT {
     public void updateNonExistingPlanPassation() throws Exception {
         int databaseSizeBeforeUpdate = planPassationRepository.findAll().size();
 
-        // Create the PlanPassation
-        PlanPassationDTO planPassationDTO = planPassationMapper.toDto(planPassation);
-
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPlanPassationMockMvc.perform(put("/api/plan-passations")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(planPassationDTO)))
+            .content(TestUtil.convertObjectToJsonBytes(planPassation)))
             .andExpect(status().isBadRequest());
 
         // Validate the PlanPassation in the database
