@@ -107,9 +107,6 @@ public class PlanPassationResourceIT {
     private static final String DEFAULT_COMMENTAIRE_PUBLICATION = "AAAAAAAAAA";
     private static final String UPDATED_COMMENTAIRE_PUBLICATION = "BBBBBBBBBB";
 
-    private static final String DEFAULT_NUM_PLAN = "AAAAAAAAAA";
-    private static final String UPDATED_NUM_PLAN = "BBBBBBBBBB";
-
     @Autowired
     private PlanPassationRepository planPassationRepository;
 
@@ -159,8 +156,7 @@ public class PlanPassationResourceIT {
             .dateValidation2(DEFAULT_DATE_VALIDATION_2)
             .dateRejet(DEFAULT_DATE_REJET)
             .datePublication(DEFAULT_DATE_PUBLICATION)
-            .commentairePublication(DEFAULT_COMMENTAIRE_PUBLICATION)
-            .numPlan(DEFAULT_NUM_PLAN);
+            .commentairePublication(DEFAULT_COMMENTAIRE_PUBLICATION);
         return planPassation;
     }
     /**
@@ -195,8 +191,7 @@ public class PlanPassationResourceIT {
             .dateValidation2(UPDATED_DATE_VALIDATION_2)
             .dateRejet(UPDATED_DATE_REJET)
             .datePublication(UPDATED_DATE_PUBLICATION)
-            .commentairePublication(UPDATED_COMMENTAIRE_PUBLICATION)
-            .numPlan(UPDATED_NUM_PLAN);
+            .commentairePublication(UPDATED_COMMENTAIRE_PUBLICATION);
         return planPassation;
     }
 
@@ -245,7 +240,6 @@ public class PlanPassationResourceIT {
         assertThat(testPlanPassation.getDateRejet()).isEqualTo(DEFAULT_DATE_REJET);
         assertThat(testPlanPassation.getDatePublication()).isEqualTo(DEFAULT_DATE_PUBLICATION);
         assertThat(testPlanPassation.getCommentairePublication()).isEqualTo(DEFAULT_COMMENTAIRE_PUBLICATION);
-        assertThat(testPlanPassation.getNumPlan()).isEqualTo(DEFAULT_NUM_PLAN);
     }
 
     @Test
@@ -344,10 +338,9 @@ public class PlanPassationResourceIT {
             .andExpect(jsonPath("$.[*].dateValidation2").value(hasItem(DEFAULT_DATE_VALIDATION_2.toString())))
             .andExpect(jsonPath("$.[*].dateRejet").value(hasItem(DEFAULT_DATE_REJET.toString())))
             .andExpect(jsonPath("$.[*].datePublication").value(hasItem(DEFAULT_DATE_PUBLICATION.toString())))
-            .andExpect(jsonPath("$.[*].commentairePublication").value(hasItem(DEFAULT_COMMENTAIRE_PUBLICATION)))
-            .andExpect(jsonPath("$.[*].numPlan").value(hasItem(DEFAULT_NUM_PLAN)));
+            .andExpect(jsonPath("$.[*].commentairePublication").value(hasItem(DEFAULT_COMMENTAIRE_PUBLICATION)));
     }
-    
+
     @Test
     @Transactional
     public void getPlanPassation() throws Exception {
@@ -383,8 +376,7 @@ public class PlanPassationResourceIT {
             .andExpect(jsonPath("$.dateValidation2").value(DEFAULT_DATE_VALIDATION_2.toString()))
             .andExpect(jsonPath("$.dateRejet").value(DEFAULT_DATE_REJET.toString()))
             .andExpect(jsonPath("$.datePublication").value(DEFAULT_DATE_PUBLICATION.toString()))
-            .andExpect(jsonPath("$.commentairePublication").value(DEFAULT_COMMENTAIRE_PUBLICATION))
-            .andExpect(jsonPath("$.numPlan").value(DEFAULT_NUM_PLAN));
+            .andExpect(jsonPath("$.commentairePublication").value(DEFAULT_COMMENTAIRE_PUBLICATION));
     }
     @Test
     @Transactional
@@ -431,8 +423,7 @@ public class PlanPassationResourceIT {
             .dateValidation2(UPDATED_DATE_VALIDATION_2)
             .dateRejet(UPDATED_DATE_REJET)
             .datePublication(UPDATED_DATE_PUBLICATION)
-            .commentairePublication(UPDATED_COMMENTAIRE_PUBLICATION)
-            .numPlan(UPDATED_NUM_PLAN);
+            .commentairePublication(UPDATED_COMMENTAIRE_PUBLICATION);
         PlanPassationDTO planPassationDTO = planPassationMapper.toDto(updatedPlanPassation);
 
         restPlanPassationMockMvc.perform(put("/api/plan-passations")
@@ -469,7 +460,6 @@ public class PlanPassationResourceIT {
         assertThat(testPlanPassation.getDateRejet()).isEqualTo(UPDATED_DATE_REJET);
         assertThat(testPlanPassation.getDatePublication()).isEqualTo(UPDATED_DATE_PUBLICATION);
         assertThat(testPlanPassation.getCommentairePublication()).isEqualTo(UPDATED_COMMENTAIRE_PUBLICATION);
-        assertThat(testPlanPassation.getNumPlan()).isEqualTo(UPDATED_NUM_PLAN);
     }
 
     @Test

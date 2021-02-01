@@ -1,0 +1,27 @@
+{
+  "fluentMethods": true,
+  "clientRootFolder": "planpassationms",
+  "relationships": [],
+  "fields": [
+    {
+      "fieldName": "nomTable",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "valeurCourant",
+      "fieldType": "Long"
+    }
+  ],
+  "changelogDate": "20210118134821",
+  "dto": "no",
+  "searchEngine": false,
+  "service": "no",
+  "entityTableName": "sequance_generator",
+  "databaseType": "sql",
+  "readOnly": false,
+  "jpaMetamodelFiltering": false,
+  "pagination": "no",
+  "microserviceName": "planpassationms"
+}

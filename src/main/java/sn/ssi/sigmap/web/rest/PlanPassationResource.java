@@ -1,21 +1,16 @@
 package sn.ssi.sigmap.web.rest;
 
-import sn.ssi.sigmap.service.PlanPassationService;
+import sn.ssi.sigmap.domain.PlanPassation;
+import sn.ssi.sigmap.repository.PlanPassationRepository;
 import sn.ssi.sigmap.web.rest.errors.BadRequestAlertException;
-import sn.ssi.sigmap.service.dto.PlanPassationDTO;
 
 import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,6 +24,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
+@Transactional
 public class PlanPassationResource {
 
     private final Logger log = LoggerFactory.getLogger(PlanPassationResource.class);
@@ -38,26 +34,26 @@ public class PlanPassationResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final PlanPassationService planPassationService;
+    private final PlanPassationRepository planPassationRepository;
 
-    public PlanPassationResource(PlanPassationService planPassationService) {
-        this.planPassationService = planPassationService;
+    public PlanPassationResource(PlanPassationRepository planPassationRepository) {
+        this.planPassationRepository = planPassationRepository;
     }
 
     /**
      * {@code POST  /plan-passations} : Create a new planPassation.
      *
-     * @param planPassationDTO the planPassationDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new planPassationDTO, or with status {@code 400 (Bad Request)} if the planPassation has already an ID.
+     * @param planPassation the planPassation to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new planPassation, or with status {@code 400 (Bad Request)} if the planPassation has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/plan-passations")
-    public ResponseEntity<PlanPassationDTO> createPlanPassation(@Valid @RequestBody PlanPassationDTO planPassationDTO) throws URISyntaxException {
-        log.debug("REST request to save PlanPassation : {}", planPassationDTO);
-        if (planPassationDTO.getId() != null) {
+    public ResponseEntity<PlanPassation> createPlanPassation(@Valid @RequestBody PlanPassation planPassation) throws URISyntaxException {
+        log.debug("REST request to save PlanPassation : {}", planPassation);
+        if (planPassation.getId() != null) {
             throw new BadRequestAlertException("A new planPassation cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        PlanPassationDTO result = planPassationService.save(planPassationDTO);
+        PlanPassation result = planPassationRepository.save(planPassation);
         return ResponseEntity.created(new URI("/api/plan-passations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -66,61 +62,58 @@ public class PlanPassationResource {
     /**
      * {@code PUT  /plan-passations} : Updates an existing planPassation.
      *
-     * @param planPassationDTO the planPassationDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated planPassationDTO,
-     * or with status {@code 400 (Bad Request)} if the planPassationDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the planPassationDTO couldn't be updated.
+     * @param planPassation the planPassation to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated planPassation,
+     * or with status {@code 400 (Bad Request)} if the planPassation is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the planPassation couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/plan-passations")
-    public ResponseEntity<PlanPassationDTO> updatePlanPassation(@Valid @RequestBody PlanPassationDTO planPassationDTO) throws URISyntaxException {
-        log.debug("REST request to update PlanPassation : {}", planPassationDTO);
-        if (planPassationDTO.getId() == null) {
+    public ResponseEntity<PlanPassation> updatePlanPassation(@Valid @RequestBody PlanPassation planPassation) throws URISyntaxException {
+        log.debug("REST request to update PlanPassation : {}", planPassation);
+        if (planPassation.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        PlanPassationDTO result = planPassationService.save(planPassationDTO);
+        PlanPassation result = planPassationRepository.save(planPassation);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, planPassationDTO.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, planPassation.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code GET  /plan-passations} : get all the planPassations.
      *
-     * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of planPassations in body.
      */
     @GetMapping("/plan-passations")
-    public ResponseEntity<List<PlanPassationDTO>> getAllPlanPassations(Pageable pageable) {
-        log.debug("REST request to get a page of PlanPassations");
-        Page<PlanPassationDTO> page = planPassationService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    public List<PlanPassation> getAllPlanPassations() {
+        log.debug("REST request to get all PlanPassations");
+        return planPassationRepository.findAll();
     }
 
     /**
      * {@code GET  /plan-passations/:id} : get the "id" planPassation.
      *
-     * @param id the id of the planPassationDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the planPassationDTO, or with status {@code 404 (Not Found)}.
+     * @param id the id of the planPassation to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the planPassation, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/plan-passations/{id}")
-    public ResponseEntity<PlanPassationDTO> getPlanPassation(@PathVariable Long id) {
+    public ResponseEntity<PlanPassation> getPlanPassation(@PathVariable Long id) {
         log.debug("REST request to get PlanPassation : {}", id);
-        Optional<PlanPassationDTO> planPassationDTO = planPassationService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(planPassationDTO);
+        Optional<PlanPassation> planPassation = planPassationRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(planPassation);
     }
 
     /**
      * {@code DELETE  /plan-passations/:id} : delete the "id" planPassation.
      *
-     * @param id the id of the planPassationDTO to delete.
+     * @param id the id of the planPassation to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/plan-passations/{id}")
     public ResponseEntity<Void> deletePlanPassation(@PathVariable Long id) {
         log.debug("REST request to delete PlanPassation : {}", id);
-        planPassationService.delete(id);
+        planPassationRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }
