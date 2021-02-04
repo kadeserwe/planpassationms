@@ -9,7 +9,7 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link SygService} and its DTO {@link SygServiceDTO}.
  */
-@Mapper(componentModel = "spring", uses = {SygTypeServiceMapper.class})
+//@Mapper(componentModel = "spring", uses = {SygTypeServiceMapper.class})
 public interface SygServiceMapper extends EntityMapper<SygServiceDTO, SygService> {
 
     @Mapping(source = "sygTypeService.id", target = "sygTypeServiceId")
