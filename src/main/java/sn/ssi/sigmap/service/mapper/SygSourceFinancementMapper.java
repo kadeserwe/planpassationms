@@ -9,11 +9,11 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link SygSourceFinancement} and its DTO {@link SygSourceFinancementDTO}.
  */
-@Mapper(componentModel = "spring", uses = {SygTypeSourceFinancementMapper.class})
+//@Mapper(componentModel = "spring", uses = {SygTypeSourceFinancementMapper.class})
 public interface SygSourceFinancementMapper extends EntityMapper<SygSourceFinancementDTO, SygSourceFinancement> {
 
     @Mapping(source = "sygTypeSourceFinancement.id", target = "sygTypeSourceFinancementId")
-    @Mapping(source = "sygTypeSourceFinancement.libelle", target = "sygTypeSourceFinancementLibelle")
+//    @Mapping(source = "sygTypeSourceFinancement.libelle", target = "sygTypeSourceFinancementLibelle")
     SygSourceFinancementDTO toDto(SygSourceFinancement sygSourceFinancement);
 
     @Mapping(source = "sygTypeSourceFinancementId", target = "sygTypeSourceFinancement")
