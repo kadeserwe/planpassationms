@@ -16,12 +16,16 @@
     {
       "fieldName": "annee",
       "fieldType": "Integer",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "dateCreation",
       "fieldType": "LocalDate",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": [
+        "required"
+      ]
     },
     {
       "fieldName": "dateMiseValidation",
@@ -98,9 +102,9 @@
   "relationships": [],
   "changelogDate": "20210112112931",
   "entityTableName": "plan_passation",
-  "dto": "mapstruct",
-  "pagination": "pagination",
-  "service": "serviceImpl",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
   "jpaMetamodelFiltering": false,
   "fluentMethods": true,
   "readOnly": false,
