@@ -1,0 +1,258 @@
+application {
+  config {
+    applicationType microservice
+    authenticationType jwt
+    baseName planpassationms
+    blueprints []
+    buildTool maven
+    cacheProvider hazelcast
+    clientPackageManager npm
+    creationTimestamp 1610374930589
+    databaseType sql
+    devDatabaseType postgresql
+    dtoSuffix DTO
+    embeddableLaunchScript false
+    enableHibernateCache true
+    enableSwaggerCodegen false
+    enableTranslation true
+    jhiPrefix jhi
+    jhipsterVersion "6.10.5"
+    jwtSecretKey "ZjgzMDdlNjQ0ODFjNjZmZmQyMDkxNDBkYWRlZDk0OGIxYTMwZDliYWIzZDNkNjI0MjU3NmU2Yzk5Yjc0MGNjYjAxODFkMjc4NzM5ZDhlNTgwNWUzMDdjYWZjZDRkZGY4NmVhZTdmODcwOTBmMjQzZjg5NzBmMGM1N2Q5NjFiNmU="
+    languages [fr]
+    messageBroker false
+    nativeLanguage fr
+    otherModules []
+    packageName sn.ssi.sigmap
+    prodDatabaseType postgresql
+    searchEngine false
+    serverPort 7072
+    serviceDiscoveryType eureka
+    skipClient true
+    skipUserManagement true
+    testFrameworks []
+    websocket false
+  }
+
+  entities Audit, ConfGenSequence, Historique, ModePassation, ParamDate, PlanPassation, Realisation, SequanceGenerator, SigRealisation, SiPlanPassation, SygService, SygSourceFinancement, SygTypeMarche, SygTypeService, SygTypeSourceFinancement, TableDeTransaction, TableRow
+}
+
+entity Audit {
+  date LocalDate,
+  typeConnexion String,
+  entite String,
+  message String
+}
+entity ConfGenSequence {
+  tableName String maxlength(100),
+  currentValue Long
+}
+entity Historique {
+  dateRejet LocalDate,
+  dateRjet2 LocalDate,
+  dateMiseValidation LocalDate,
+  commentaireRejet String,
+  commentaireMiseValidation String,
+  fichierMiseValidation AnyBlob,
+  fichierRejet AnyBlob,
+  etat String,
+  etat2 String,
+  commentaireRejet2 String,
+  fichierRejet2 AnyBlob
+}
+entity ModePassation {
+  /**
+   * The firstname attribute.
+   */
+  libelle String required,
+  code String required,
+  description String required
+}
+entity ParamDate {
+  dateCreat LocalDate
+}
+entity PlanPassation {
+  dateDebut LocalDate,
+  dateFin LocalDate,
+  commentaire String,
+  annee Integer required,
+  dateCreation LocalDate required,
+  dateMiseValidation LocalDate,
+  dateValidation LocalDate,
+  statut String,
+  commentaireMiseEnValidationAC String,
+  referenceMiseValidationAC String,
+  fichierMiseValidationAC AnyBlob,
+  dateMiseEnValidationCcmp LocalDate,
+  fichierMiseValidationCcmp AnyBlob,
+  referenceMiseValidationCcmp String,
+  dateValidation1 LocalDate,
+  commentaireValidation String,
+  referenceValidation String,
+  fichierValidation AnyBlob,
+  dateValidation2 LocalDate,
+  dateRejet LocalDate,
+  datePublication LocalDate,
+  commentairePublication String,
+  numPlan String
+}
+entity Realisation {
+  libelle String,
+  dateAttribution LocalDate required,
+  delaiexecution Integer required,
+  objet String,
+  montant BigDecimal,
+  examenDncmp Integer required,
+  examenPtf Integer required,
+  chapitreImputation String required,
+  autorisationEngagement String required,
+  dateReceptionDossier LocalDate required,
+  dateNonObjection LocalDate required,
+  dateAutorisation LocalDate required,
+  dateRecepNonObjection LocalDate required,
+  dateRecepDossCorrige LocalDate required,
+  datePubParPrmp LocalDate required,
+  dateOuverturePlis LocalDate required,
+  dateRecepNonObjectOcmp LocalDate required,
+  dateRecepRapportEva LocalDate required,
+  dateRecepNonObjectPtf LocalDate required,
+  dateExamenJuridique LocalDate required,
+  dateNotifContrat LocalDate required,
+  dateApprobationContrat LocalDate required
+}
+entity SequanceGenerator {
+  nomTable String maxlength(50),
+  valeurCourant Long
+}
+entity SigRealisation {
+  libelle String required,
+  dateAttribution LocalDate,
+  delaiexecution Integer,
+  objet String required,
+  montant BigDecimal,
+  examenDncmp Integer,
+  examenPtf Integer,
+  chapitreImputation String,
+  autorisationEngagement String,
+  dateReceptionDossier LocalDate,
+  dateNonObjection LocalDate,
+  dateAutorisation LocalDate,
+  dateRecepNonObjection LocalDate,
+  dateRecepDossCorrige LocalDate,
+  datePubParPrmp LocalDate,
+  dateOuverturePlis LocalDate,
+  dateRecepNonObjectOcmp LocalDate,
+  dateRecepRapportEva LocalDate,
+  dateRecepNonObjectPtf LocalDate,
+  dateExamenJuridique LocalDate,
+  dateNotifContrat LocalDate,
+  dateApprobationContrat LocalDate
+}
+entity SiPlanPassation {
+  numeroPlan String required,
+  dateDebut LocalDate,
+  dateFin LocalDate,
+  commentaire String,
+  annee Integer required,
+  dateCreation LocalDate required,
+  dateMiseValidation LocalDate,
+  dateValidation LocalDate,
+  statut String,
+  commentaireMiseEnValidationAC String,
+  referenceMiseValidationAC String,
+  fichierMiseValidationAC AnyBlob,
+  dateMiseEnValidationCcmp LocalDate,
+  fichierMiseValidationCcmp AnyBlob,
+  referenceMiseValidationCcmp String,
+  dateValidation1 LocalDate,
+  commentaireValidation String,
+  referenceValidation String,
+  fichierValidation AnyBlob,
+  dateValidation2 LocalDate,
+  dateRejet LocalDate,
+  datePublication LocalDate,
+  commentairePublication String
+}
+entity SygService {
+  code String required unique,
+  libelle String required,
+  description String
+}
+entity SygSourceFinancement {
+  libelle String required
+}
+entity SygTypeMarche {
+  code String required unique,
+  libelle String required,
+  description String
+}
+entity SygTypeService {
+  libelle String required
+}
+entity SygTypeSourceFinancement {
+  libelle String required
+}
+entity TableDeTransaction {
+  tableName String maxlength(100),
+  columnName String,
+  numeroLigne Long,
+  dataType DataType,
+  masterId Long,
+  intValue Integer,
+  booleanValue Boolean,
+  moneyValue BigDecimal,
+  stringValue String,
+  textValue TextBlob,
+  dateValue LocalDate,
+  instantValue Instant,
+  zoneLocalTimeValue ZonedDateTime,
+  longValue Long,
+  floatValue Float,
+  doubleValue Double,
+  durationValue Duration,
+  uuidValue UUID
+}
+entity TableRow {
+  tableName String maxlength(64),
+  labelName String maxlength(100),
+  columnName String maxlength(50),
+  dataType dataType
+}
+enum DataType {
+  INT,
+  MONEY,
+  BOOLEAN,
+  DATE,
+  DATE_TIME,
+  STRING,
+  TEXT,
+  IMAGE,
+  FILE
+}
+enum dataType {
+  INT,
+  MONEY,
+  BOOLEAN,
+  DATE,
+  DATE_TIME,
+  STRING,
+  TEXT,
+  IMAGE,
+  FILE
+}
+
+relationship ManyToOne {
+  Historique{planPassation required} to PlanPassation,
+  Realisation{planPassation required} to PlanPassation,
+  SigRealisation{planPassation(annee)} to PlanPassation,
+  SygService{sygTypeService(libelle) required} to SygTypeService,
+  SygSourceFinancement{sygTypeSourceFinancement(libelle) required} to SygTypeSourceFinancement
+}
+
+paginate Audit, ConfGenSequence, Historique, ParamDate, Realisation, SigRealisation, SiPlanPassation, SygService, SygSourceFinancement, SygTypeMarche, SygTypeService, SygTypeSourceFinancement, TableRow with pagination
+service Audit, SigRealisation, SiPlanPassation, TableRow with serviceClass
+service Historique, ParamDate, Realisation, SygService, SygSourceFinancement, SygTypeMarche, SygTypeService, SygTypeSourceFinancement with serviceImpl
+microservice Audit, ConfGenSequence, Historique, ModePassation, ParamDate, PlanPassation, Realisation, SequanceGenerator, SigRealisation, SiPlanPassation, SygService, SygSourceFinancement, SygTypeMarche, SygTypeService, SygTypeSourceFinancement, TableDeTransaction, TableRow with planpassationms
+clientRootFolder Audit, ConfGenSequence, Historique, ModePassation, ParamDate, PlanPassation, Realisation, SequanceGenerator, SigRealisation, SiPlanPassation, SygService, SygSourceFinancement, SygTypeMarche, SygTypeService, SygTypeSourceFinancement, TableDeTransaction, TableRow with planpassationms
+dto Historique, ParamDate, Realisation, SygService, SygSourceFinancement, SygTypeMarche, SygTypeService, SygTypeSourceFinancement with mapstruct
+filter SygService, SygSourceFinancement, SygTypeMarche, SygTypeService, SygTypeSourceFinancement
+readOnly TableDeTransaction
