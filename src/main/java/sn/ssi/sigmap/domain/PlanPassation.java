@@ -37,7 +37,7 @@ public class PlanPassation implements Serializable {
     @Column(name = "annee", nullable = false)
     private Integer annee;
 
-    @NotNull
+
     @Column(name = "date_creation")
     private LocalDate dateCreation;
 
