@@ -25,7 +25,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="annee" type="integer">
-                <constraints nullable="false" />
+                <constraints nullable="true" />
             </column>
             <column name="date_creation" type="date">
                 <constraints nullable="true" />

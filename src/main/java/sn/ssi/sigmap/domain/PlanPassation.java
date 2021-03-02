@@ -33,8 +33,8 @@ public class PlanPassation implements Serializable {
     @Column(name = "commentaire")
     private String commentaire;
 
-    @NotNull
-    @Column(name = "annee", nullable = false)
+
+    @Column(name = "annee")
     private Integer annee;
 
 
