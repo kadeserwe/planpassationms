@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
- * A Audit.
+ * A Audit Classe.
  */
 @Entity
 @Table(name = "audit")
