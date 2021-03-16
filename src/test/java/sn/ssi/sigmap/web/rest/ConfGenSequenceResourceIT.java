@@ -3,7 +3,6 @@ package sn.ssi.sigmap.web.rest;
 import sn.ssi.sigmap.PlanpassationmsApp;
 import sn.ssi.sigmap.domain.ConfGenSequence;
 import sn.ssi.sigmap.repository.ConfGenSequenceRepository;
-import sn.ssi.sigmap.service.ConfGenSequenceService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,9 +37,6 @@ public class ConfGenSequenceResourceIT {
 
     @Autowired
     private ConfGenSequenceRepository confGenSequenceRepository;
-
-    @Autowired
-    private ConfGenSequenceService confGenSequenceService;
 
     @Autowired
     private EntityManager em;
@@ -159,7 +155,7 @@ public class ConfGenSequenceResourceIT {
     @Transactional
     public void updateConfGenSequence() throws Exception {
         // Initialize the database
-        confGenSequenceService.save(confGenSequence);
+        confGenSequenceRepository.saveAndFlush(confGenSequence);
 
         int databaseSizeBeforeUpdate = confGenSequenceRepository.findAll().size();
 
@@ -204,7 +200,7 @@ public class ConfGenSequenceResourceIT {
     @Transactional
     public void deleteConfGenSequence() throws Exception {
         // Initialize the database
-        confGenSequenceService.save(confGenSequence);
+        confGenSequenceRepository.saveAndFlush(confGenSequence);
 
         int databaseSizeBeforeDelete = confGenSequenceRepository.findAll().size();
 

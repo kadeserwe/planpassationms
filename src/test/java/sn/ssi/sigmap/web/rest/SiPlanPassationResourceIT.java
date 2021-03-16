@@ -1,8 +1,9 @@
 package sn.ssi.sigmap.web.rest;
 
 import sn.ssi.sigmap.PlanpassationmsApp;
-import sn.ssi.sigmap.domain.PlanPassation;
-import sn.ssi.sigmap.repository.PlanPassationRepository;
+import sn.ssi.sigmap.domain.SiPlanPassation;
+import sn.ssi.sigmap.repository.SiPlanPassationRepository;
+import sn.ssi.sigmap.service.SiPlanPassationService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,12 +26,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Integration tests for the {@link PlanPassationResource} REST controller.
+ * Integration tests for the {@link SiPlanPassationResource} REST controller.
  */
 @SpringBootTest(classes = PlanpassationmsApp.class)
 @AutoConfigureMockMvc
 @WithMockUser
-public class PlanPassationResourceIT {
+public class SiPlanPassationResourceIT {
+
+    private static final String DEFAULT_NUMERO_PLAN = "AAAAAAAAAA";
+    private static final String UPDATED_NUMERO_PLAN = "BBBBBBBBBB";
 
     private static final LocalDate DEFAULT_DATE_DEBUT = LocalDate.ofEpochDay(0L);
     private static final LocalDate UPDATED_DATE_DEBUT = LocalDate.now(ZoneId.systemDefault());
@@ -105,15 +109,18 @@ public class PlanPassationResourceIT {
     private static final String UPDATED_COMMENTAIRE_PUBLICATION = "BBBBBBBBBB";
 
     @Autowired
-    private PlanPassationRepository planPassationRepository;
+    private SiPlanPassationRepository siPlanPassationRepository;
+
+    @Autowired
+    private SiPlanPassationService siPlanPassationService;
 
     @Autowired
     private EntityManager em;
 
     @Autowired
-    private MockMvc restPlanPassationMockMvc;
+    private MockMvc restSiPlanPassationMockMvc;
 
-    private PlanPassation planPassation;
+    private SiPlanPassation siPlanPassation;
 
     /**
      * Create an entity for this test.
@@ -121,8 +128,9 @@ public class PlanPassationResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static PlanPassation createEntity(EntityManager em) {
-        PlanPassation planPassation = new PlanPassation()
+    public static SiPlanPassation createEntity(EntityManager em) {
+        SiPlanPassation siPlanPassation = new SiPlanPassation()
+            .numeroPlan(DEFAULT_NUMERO_PLAN)
             .dateDebut(DEFAULT_DATE_DEBUT)
             .dateFin(DEFAULT_DATE_FIN)
             .commentaire(DEFAULT_COMMENTAIRE)
@@ -148,7 +156,7 @@ public class PlanPassationResourceIT {
             .dateRejet(DEFAULT_DATE_REJET)
             .datePublication(DEFAULT_DATE_PUBLICATION)
             .commentairePublication(DEFAULT_COMMENTAIRE_PUBLICATION);
-        return planPassation;
+        return siPlanPassation;
     }
     /**
      * Create an updated entity for this test.
@@ -156,8 +164,9 @@ public class PlanPassationResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static PlanPassation createUpdatedEntity(EntityManager em) {
-        PlanPassation planPassation = new PlanPassation()
+    public static SiPlanPassation createUpdatedEntity(EntityManager em) {
+        SiPlanPassation siPlanPassation = new SiPlanPassation()
+            .numeroPlan(UPDATED_NUMERO_PLAN)
             .dateDebut(UPDATED_DATE_DEBUT)
             .dateFin(UPDATED_DATE_FIN)
             .commentaire(UPDATED_COMMENTAIRE)
@@ -183,124 +192,145 @@ public class PlanPassationResourceIT {
             .dateRejet(UPDATED_DATE_REJET)
             .datePublication(UPDATED_DATE_PUBLICATION)
             .commentairePublication(UPDATED_COMMENTAIRE_PUBLICATION);
-        return planPassation;
+        return siPlanPassation;
     }
 
     @BeforeEach
     public void initTest() {
-        planPassation = createEntity(em);
+        siPlanPassation = createEntity(em);
     }
 
     @Test
     @Transactional
-    public void createPlanPassation() throws Exception {
-        int databaseSizeBeforeCreate = planPassationRepository.findAll().size();
-        // Create the PlanPassation
-        restPlanPassationMockMvc.perform(post("/api/plan-passations")
+    public void createSiPlanPassation() throws Exception {
+        int databaseSizeBeforeCreate = siPlanPassationRepository.findAll().size();
+        // Create the SiPlanPassation
+        restSiPlanPassationMockMvc.perform(post("/api/si-plan-passations")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(planPassation)))
+            .content(TestUtil.convertObjectToJsonBytes(siPlanPassation)))
             .andExpect(status().isCreated());
 
-        // Validate the PlanPassation in the database
-        List<PlanPassation> planPassationList = planPassationRepository.findAll();
-        assertThat(planPassationList).hasSize(databaseSizeBeforeCreate + 1);
-        PlanPassation testPlanPassation = planPassationList.get(planPassationList.size() - 1);
-        assertThat(testPlanPassation.getDateDebut()).isEqualTo(DEFAULT_DATE_DEBUT);
-        assertThat(testPlanPassation.getDateFin()).isEqualTo(DEFAULT_DATE_FIN);
-        assertThat(testPlanPassation.getCommentaire()).isEqualTo(DEFAULT_COMMENTAIRE);
-        assertThat(testPlanPassation.getAnnee()).isEqualTo(DEFAULT_ANNEE);
-        assertThat(testPlanPassation.getDateCreation()).isEqualTo(DEFAULT_DATE_CREATION);
-        assertThat(testPlanPassation.getDateMiseValidation()).isEqualTo(DEFAULT_DATE_MISE_VALIDATION);
-        assertThat(testPlanPassation.getDateValidation()).isEqualTo(DEFAULT_DATE_VALIDATION);
-        assertThat(testPlanPassation.getStatut()).isEqualTo(DEFAULT_STATUT);
-        assertThat(testPlanPassation.getCommentaireMiseEnValidationAC()).isEqualTo(DEFAULT_COMMENTAIRE_MISE_EN_VALIDATION_AC);
-        assertThat(testPlanPassation.getReferenceMiseValidationAC()).isEqualTo(DEFAULT_REFERENCE_MISE_VALIDATION_AC);
-        assertThat(testPlanPassation.getFichierMiseValidationAC()).isEqualTo(DEFAULT_FICHIER_MISE_VALIDATION_AC);
-        assertThat(testPlanPassation.getFichierMiseValidationACContentType()).isEqualTo(DEFAULT_FICHIER_MISE_VALIDATION_AC_CONTENT_TYPE);
-        assertThat(testPlanPassation.getDateMiseEnValidationCcmp()).isEqualTo(DEFAULT_DATE_MISE_EN_VALIDATION_CCMP);
-        assertThat(testPlanPassation.getFichierMiseValidationCcmp()).isEqualTo(DEFAULT_FICHIER_MISE_VALIDATION_CCMP);
-        assertThat(testPlanPassation.getFichierMiseValidationCcmpContentType()).isEqualTo(DEFAULT_FICHIER_MISE_VALIDATION_CCMP_CONTENT_TYPE);
-        assertThat(testPlanPassation.getReferenceMiseValidationCcmp()).isEqualTo(DEFAULT_REFERENCE_MISE_VALIDATION_CCMP);
-        assertThat(testPlanPassation.getDateValidation1()).isEqualTo(DEFAULT_DATE_VALIDATION_1);
-        assertThat(testPlanPassation.getCommentaireValidation()).isEqualTo(DEFAULT_COMMENTAIRE_VALIDATION);
-        assertThat(testPlanPassation.getReferenceValidation()).isEqualTo(DEFAULT_REFERENCE_VALIDATION);
-        assertThat(testPlanPassation.getFichierValidation()).isEqualTo(DEFAULT_FICHIER_VALIDATION);
-        assertThat(testPlanPassation.getFichierValidationContentType()).isEqualTo(DEFAULT_FICHIER_VALIDATION_CONTENT_TYPE);
-        assertThat(testPlanPassation.getDateValidation2()).isEqualTo(DEFAULT_DATE_VALIDATION_2);
-        assertThat(testPlanPassation.getDateRejet()).isEqualTo(DEFAULT_DATE_REJET);
-        assertThat(testPlanPassation.getDatePublication()).isEqualTo(DEFAULT_DATE_PUBLICATION);
-        assertThat(testPlanPassation.getCommentairePublication()).isEqualTo(DEFAULT_COMMENTAIRE_PUBLICATION);
+        // Validate the SiPlanPassation in the database
+        List<SiPlanPassation> siPlanPassationList = siPlanPassationRepository.findAll();
+        assertThat(siPlanPassationList).hasSize(databaseSizeBeforeCreate + 1);
+        SiPlanPassation testSiPlanPassation = siPlanPassationList.get(siPlanPassationList.size() - 1);
+        assertThat(testSiPlanPassation.getNumeroPlan()).isEqualTo(DEFAULT_NUMERO_PLAN);
+        assertThat(testSiPlanPassation.getDateDebut()).isEqualTo(DEFAULT_DATE_DEBUT);
+        assertThat(testSiPlanPassation.getDateFin()).isEqualTo(DEFAULT_DATE_FIN);
+        assertThat(testSiPlanPassation.getCommentaire()).isEqualTo(DEFAULT_COMMENTAIRE);
+        assertThat(testSiPlanPassation.getAnnee()).isEqualTo(DEFAULT_ANNEE);
+        assertThat(testSiPlanPassation.getDateCreation()).isEqualTo(DEFAULT_DATE_CREATION);
+        assertThat(testSiPlanPassation.getDateMiseValidation()).isEqualTo(DEFAULT_DATE_MISE_VALIDATION);
+        assertThat(testSiPlanPassation.getDateValidation()).isEqualTo(DEFAULT_DATE_VALIDATION);
+        assertThat(testSiPlanPassation.getStatut()).isEqualTo(DEFAULT_STATUT);
+        assertThat(testSiPlanPassation.getCommentaireMiseEnValidationAC()).isEqualTo(DEFAULT_COMMENTAIRE_MISE_EN_VALIDATION_AC);
+        assertThat(testSiPlanPassation.getReferenceMiseValidationAC()).isEqualTo(DEFAULT_REFERENCE_MISE_VALIDATION_AC);
+        assertThat(testSiPlanPassation.getFichierMiseValidationAC()).isEqualTo(DEFAULT_FICHIER_MISE_VALIDATION_AC);
+        assertThat(testSiPlanPassation.getFichierMiseValidationACContentType()).isEqualTo(DEFAULT_FICHIER_MISE_VALIDATION_AC_CONTENT_TYPE);
+        assertThat(testSiPlanPassation.getDateMiseEnValidationCcmp()).isEqualTo(DEFAULT_DATE_MISE_EN_VALIDATION_CCMP);
+        assertThat(testSiPlanPassation.getFichierMiseValidationCcmp()).isEqualTo(DEFAULT_FICHIER_MISE_VALIDATION_CCMP);
+        assertThat(testSiPlanPassation.getFichierMiseValidationCcmpContentType()).isEqualTo(DEFAULT_FICHIER_MISE_VALIDATION_CCMP_CONTENT_TYPE);
+        assertThat(testSiPlanPassation.getReferenceMiseValidationCcmp()).isEqualTo(DEFAULT_REFERENCE_MISE_VALIDATION_CCMP);
+        assertThat(testSiPlanPassation.getDateValidation1()).isEqualTo(DEFAULT_DATE_VALIDATION_1);
+        assertThat(testSiPlanPassation.getCommentaireValidation()).isEqualTo(DEFAULT_COMMENTAIRE_VALIDATION);
+        assertThat(testSiPlanPassation.getReferenceValidation()).isEqualTo(DEFAULT_REFERENCE_VALIDATION);
+        assertThat(testSiPlanPassation.getFichierValidation()).isEqualTo(DEFAULT_FICHIER_VALIDATION);
+        assertThat(testSiPlanPassation.getFichierValidationContentType()).isEqualTo(DEFAULT_FICHIER_VALIDATION_CONTENT_TYPE);
+        assertThat(testSiPlanPassation.getDateValidation2()).isEqualTo(DEFAULT_DATE_VALIDATION_2);
+        assertThat(testSiPlanPassation.getDateRejet()).isEqualTo(DEFAULT_DATE_REJET);
+        assertThat(testSiPlanPassation.getDatePublication()).isEqualTo(DEFAULT_DATE_PUBLICATION);
+        assertThat(testSiPlanPassation.getCommentairePublication()).isEqualTo(DEFAULT_COMMENTAIRE_PUBLICATION);
     }
 
     @Test
     @Transactional
-    public void createPlanPassationWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = planPassationRepository.findAll().size();
+    public void createSiPlanPassationWithExistingId() throws Exception {
+        int databaseSizeBeforeCreate = siPlanPassationRepository.findAll().size();
 
-        // Create the PlanPassation with an existing ID
-        planPassation.setId(1L);
+        // Create the SiPlanPassation with an existing ID
+        siPlanPassation.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restPlanPassationMockMvc.perform(post("/api/plan-passations")
+        restSiPlanPassationMockMvc.perform(post("/api/si-plan-passations")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(planPassation)))
+            .content(TestUtil.convertObjectToJsonBytes(siPlanPassation)))
             .andExpect(status().isBadRequest());
 
-        // Validate the PlanPassation in the database
-        List<PlanPassation> planPassationList = planPassationRepository.findAll();
-        assertThat(planPassationList).hasSize(databaseSizeBeforeCreate);
+        // Validate the SiPlanPassation in the database
+        List<SiPlanPassation> siPlanPassationList = siPlanPassationRepository.findAll();
+        assertThat(siPlanPassationList).hasSize(databaseSizeBeforeCreate);
     }
 
+
+    @Test
+    @Transactional
+    public void checkNumeroPlanIsRequired() throws Exception {
+        int databaseSizeBeforeTest = siPlanPassationRepository.findAll().size();
+        // set the field null
+        siPlanPassation.setNumeroPlan(null);
+
+        // Create the SiPlanPassation, which fails.
+
+
+        restSiPlanPassationMockMvc.perform(post("/api/si-plan-passations")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(siPlanPassation)))
+            .andExpect(status().isBadRequest());
+
+        List<SiPlanPassation> siPlanPassationList = siPlanPassationRepository.findAll();
+        assertThat(siPlanPassationList).hasSize(databaseSizeBeforeTest);
+    }
 
     @Test
     @Transactional
     public void checkAnneeIsRequired() throws Exception {
-        int databaseSizeBeforeTest = planPassationRepository.findAll().size();
+        int databaseSizeBeforeTest = siPlanPassationRepository.findAll().size();
         // set the field null
-        planPassation.setAnnee(null);
+        siPlanPassation.setAnnee(null);
 
-        // Create the PlanPassation, which fails.
+        // Create the SiPlanPassation, which fails.
 
 
-        restPlanPassationMockMvc.perform(post("/api/plan-passations")
+        restSiPlanPassationMockMvc.perform(post("/api/si-plan-passations")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(planPassation)))
+            .content(TestUtil.convertObjectToJsonBytes(siPlanPassation)))
             .andExpect(status().isBadRequest());
 
-        List<PlanPassation> planPassationList = planPassationRepository.findAll();
-        assertThat(planPassationList).hasSize(databaseSizeBeforeTest);
+        List<SiPlanPassation> siPlanPassationList = siPlanPassationRepository.findAll();
+        assertThat(siPlanPassationList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
     @Transactional
     public void checkDateCreationIsRequired() throws Exception {
-        int databaseSizeBeforeTest = planPassationRepository.findAll().size();
+        int databaseSizeBeforeTest = siPlanPassationRepository.findAll().size();
         // set the field null
-        planPassation.setDateCreation(null);
+        siPlanPassation.setDateCreation(null);
 
-        // Create the PlanPassation, which fails.
+        // Create the SiPlanPassation, which fails.
 
 
-        restPlanPassationMockMvc.perform(post("/api/plan-passations")
+        restSiPlanPassationMockMvc.perform(post("/api/si-plan-passations")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(planPassation)))
+            .content(TestUtil.convertObjectToJsonBytes(siPlanPassation)))
             .andExpect(status().isBadRequest());
 
-        List<PlanPassation> planPassationList = planPassationRepository.findAll();
-        assertThat(planPassationList).hasSize(databaseSizeBeforeTest);
+        List<SiPlanPassation> siPlanPassationList = siPlanPassationRepository.findAll();
+        assertThat(siPlanPassationList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
     @Transactional
-    public void getAllPlanPassations() throws Exception {
+    public void getAllSiPlanPassations() throws Exception {
         // Initialize the database
-        planPassationRepository.saveAndFlush(planPassation);
+        siPlanPassationRepository.saveAndFlush(siPlanPassation);
 
-        // Get all the planPassationList
-        restPlanPassationMockMvc.perform(get("/api/plan-passations?sort=id,desc"))
+        // Get all the siPlanPassationList
+        restSiPlanPassationMockMvc.perform(get("/api/si-plan-passations?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(planPassation.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(siPlanPassation.getId().intValue())))
+            .andExpect(jsonPath("$.[*].numeroPlan").value(hasItem(DEFAULT_NUMERO_PLAN)))
             .andExpect(jsonPath("$.[*].dateDebut").value(hasItem(DEFAULT_DATE_DEBUT.toString())))
             .andExpect(jsonPath("$.[*].dateFin").value(hasItem(DEFAULT_DATE_FIN.toString())))
             .andExpect(jsonPath("$.[*].commentaire").value(hasItem(DEFAULT_COMMENTAIRE)))
@@ -330,15 +360,16 @@ public class PlanPassationResourceIT {
     
     @Test
     @Transactional
-    public void getPlanPassation() throws Exception {
+    public void getSiPlanPassation() throws Exception {
         // Initialize the database
-        planPassationRepository.saveAndFlush(planPassation);
+        siPlanPassationRepository.saveAndFlush(siPlanPassation);
 
-        // Get the planPassation
-        restPlanPassationMockMvc.perform(get("/api/plan-passations/{id}", planPassation.getId()))
+        // Get the siPlanPassation
+        restSiPlanPassationMockMvc.perform(get("/api/si-plan-passations/{id}", siPlanPassation.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(planPassation.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(siPlanPassation.getId().intValue()))
+            .andExpect(jsonPath("$.numeroPlan").value(DEFAULT_NUMERO_PLAN))
             .andExpect(jsonPath("$.dateDebut").value(DEFAULT_DATE_DEBUT.toString()))
             .andExpect(jsonPath("$.dateFin").value(DEFAULT_DATE_FIN.toString()))
             .andExpect(jsonPath("$.commentaire").value(DEFAULT_COMMENTAIRE))
@@ -367,25 +398,26 @@ public class PlanPassationResourceIT {
     }
     @Test
     @Transactional
-    public void getNonExistingPlanPassation() throws Exception {
-        // Get the planPassation
-        restPlanPassationMockMvc.perform(get("/api/plan-passations/{id}", Long.MAX_VALUE))
+    public void getNonExistingSiPlanPassation() throws Exception {
+        // Get the siPlanPassation
+        restSiPlanPassationMockMvc.perform(get("/api/si-plan-passations/{id}", Long.MAX_VALUE))
             .andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    public void updatePlanPassation() throws Exception {
+    public void updateSiPlanPassation() throws Exception {
         // Initialize the database
-        planPassationRepository.saveAndFlush(planPassation);
+        siPlanPassationService.save(siPlanPassation);
 
-        int databaseSizeBeforeUpdate = planPassationRepository.findAll().size();
+        int databaseSizeBeforeUpdate = siPlanPassationRepository.findAll().size();
 
-        // Update the planPassation
-        PlanPassation updatedPlanPassation = planPassationRepository.findById(planPassation.getId()).get();
-        // Disconnect from session so that the updates on updatedPlanPassation are not directly saved in db
-        em.detach(updatedPlanPassation);
-        updatedPlanPassation
+        // Update the siPlanPassation
+        SiPlanPassation updatedSiPlanPassation = siPlanPassationRepository.findById(siPlanPassation.getId()).get();
+        // Disconnect from session so that the updates on updatedSiPlanPassation are not directly saved in db
+        em.detach(updatedSiPlanPassation);
+        updatedSiPlanPassation
+            .numeroPlan(UPDATED_NUMERO_PLAN)
             .dateDebut(UPDATED_DATE_DEBUT)
             .dateFin(UPDATED_DATE_FIN)
             .commentaire(UPDATED_COMMENTAIRE)
@@ -412,73 +444,74 @@ public class PlanPassationResourceIT {
             .datePublication(UPDATED_DATE_PUBLICATION)
             .commentairePublication(UPDATED_COMMENTAIRE_PUBLICATION);
 
-        restPlanPassationMockMvc.perform(put("/api/plan-passations")
+        restSiPlanPassationMockMvc.perform(put("/api/si-plan-passations")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(updatedPlanPassation)))
+            .content(TestUtil.convertObjectToJsonBytes(updatedSiPlanPassation)))
             .andExpect(status().isOk());
 
-        // Validate the PlanPassation in the database
-        List<PlanPassation> planPassationList = planPassationRepository.findAll();
-        assertThat(planPassationList).hasSize(databaseSizeBeforeUpdate);
-        PlanPassation testPlanPassation = planPassationList.get(planPassationList.size() - 1);
-        assertThat(testPlanPassation.getDateDebut()).isEqualTo(UPDATED_DATE_DEBUT);
-        assertThat(testPlanPassation.getDateFin()).isEqualTo(UPDATED_DATE_FIN);
-        assertThat(testPlanPassation.getCommentaire()).isEqualTo(UPDATED_COMMENTAIRE);
-        assertThat(testPlanPassation.getAnnee()).isEqualTo(UPDATED_ANNEE);
-        assertThat(testPlanPassation.getDateCreation()).isEqualTo(UPDATED_DATE_CREATION);
-        assertThat(testPlanPassation.getDateMiseValidation()).isEqualTo(UPDATED_DATE_MISE_VALIDATION);
-        assertThat(testPlanPassation.getDateValidation()).isEqualTo(UPDATED_DATE_VALIDATION);
-        assertThat(testPlanPassation.getStatut()).isEqualTo(UPDATED_STATUT);
-        assertThat(testPlanPassation.getCommentaireMiseEnValidationAC()).isEqualTo(UPDATED_COMMENTAIRE_MISE_EN_VALIDATION_AC);
-        assertThat(testPlanPassation.getReferenceMiseValidationAC()).isEqualTo(UPDATED_REFERENCE_MISE_VALIDATION_AC);
-        assertThat(testPlanPassation.getFichierMiseValidationAC()).isEqualTo(UPDATED_FICHIER_MISE_VALIDATION_AC);
-        assertThat(testPlanPassation.getFichierMiseValidationACContentType()).isEqualTo(UPDATED_FICHIER_MISE_VALIDATION_AC_CONTENT_TYPE);
-        assertThat(testPlanPassation.getDateMiseEnValidationCcmp()).isEqualTo(UPDATED_DATE_MISE_EN_VALIDATION_CCMP);
-        assertThat(testPlanPassation.getFichierMiseValidationCcmp()).isEqualTo(UPDATED_FICHIER_MISE_VALIDATION_CCMP);
-        assertThat(testPlanPassation.getFichierMiseValidationCcmpContentType()).isEqualTo(UPDATED_FICHIER_MISE_VALIDATION_CCMP_CONTENT_TYPE);
-        assertThat(testPlanPassation.getReferenceMiseValidationCcmp()).isEqualTo(UPDATED_REFERENCE_MISE_VALIDATION_CCMP);
-        assertThat(testPlanPassation.getDateValidation1()).isEqualTo(UPDATED_DATE_VALIDATION_1);
-        assertThat(testPlanPassation.getCommentaireValidation()).isEqualTo(UPDATED_COMMENTAIRE_VALIDATION);
-        assertThat(testPlanPassation.getReferenceValidation()).isEqualTo(UPDATED_REFERENCE_VALIDATION);
-        assertThat(testPlanPassation.getFichierValidation()).isEqualTo(UPDATED_FICHIER_VALIDATION);
-        assertThat(testPlanPassation.getFichierValidationContentType()).isEqualTo(UPDATED_FICHIER_VALIDATION_CONTENT_TYPE);
-        assertThat(testPlanPassation.getDateValidation2()).isEqualTo(UPDATED_DATE_VALIDATION_2);
-        assertThat(testPlanPassation.getDateRejet()).isEqualTo(UPDATED_DATE_REJET);
-        assertThat(testPlanPassation.getDatePublication()).isEqualTo(UPDATED_DATE_PUBLICATION);
-        assertThat(testPlanPassation.getCommentairePublication()).isEqualTo(UPDATED_COMMENTAIRE_PUBLICATION);
+        // Validate the SiPlanPassation in the database
+        List<SiPlanPassation> siPlanPassationList = siPlanPassationRepository.findAll();
+        assertThat(siPlanPassationList).hasSize(databaseSizeBeforeUpdate);
+        SiPlanPassation testSiPlanPassation = siPlanPassationList.get(siPlanPassationList.size() - 1);
+        assertThat(testSiPlanPassation.getNumeroPlan()).isEqualTo(UPDATED_NUMERO_PLAN);
+        assertThat(testSiPlanPassation.getDateDebut()).isEqualTo(UPDATED_DATE_DEBUT);
+        assertThat(testSiPlanPassation.getDateFin()).isEqualTo(UPDATED_DATE_FIN);
+        assertThat(testSiPlanPassation.getCommentaire()).isEqualTo(UPDATED_COMMENTAIRE);
+        assertThat(testSiPlanPassation.getAnnee()).isEqualTo(UPDATED_ANNEE);
+        assertThat(testSiPlanPassation.getDateCreation()).isEqualTo(UPDATED_DATE_CREATION);
+        assertThat(testSiPlanPassation.getDateMiseValidation()).isEqualTo(UPDATED_DATE_MISE_VALIDATION);
+        assertThat(testSiPlanPassation.getDateValidation()).isEqualTo(UPDATED_DATE_VALIDATION);
+        assertThat(testSiPlanPassation.getStatut()).isEqualTo(UPDATED_STATUT);
+        assertThat(testSiPlanPassation.getCommentaireMiseEnValidationAC()).isEqualTo(UPDATED_COMMENTAIRE_MISE_EN_VALIDATION_AC);
+        assertThat(testSiPlanPassation.getReferenceMiseValidationAC()).isEqualTo(UPDATED_REFERENCE_MISE_VALIDATION_AC);
+        assertThat(testSiPlanPassation.getFichierMiseValidationAC()).isEqualTo(UPDATED_FICHIER_MISE_VALIDATION_AC);
+        assertThat(testSiPlanPassation.getFichierMiseValidationACContentType()).isEqualTo(UPDATED_FICHIER_MISE_VALIDATION_AC_CONTENT_TYPE);
+        assertThat(testSiPlanPassation.getDateMiseEnValidationCcmp()).isEqualTo(UPDATED_DATE_MISE_EN_VALIDATION_CCMP);
+        assertThat(testSiPlanPassation.getFichierMiseValidationCcmp()).isEqualTo(UPDATED_FICHIER_MISE_VALIDATION_CCMP);
+        assertThat(testSiPlanPassation.getFichierMiseValidationCcmpContentType()).isEqualTo(UPDATED_FICHIER_MISE_VALIDATION_CCMP_CONTENT_TYPE);
+        assertThat(testSiPlanPassation.getReferenceMiseValidationCcmp()).isEqualTo(UPDATED_REFERENCE_MISE_VALIDATION_CCMP);
+        assertThat(testSiPlanPassation.getDateValidation1()).isEqualTo(UPDATED_DATE_VALIDATION_1);
+        assertThat(testSiPlanPassation.getCommentaireValidation()).isEqualTo(UPDATED_COMMENTAIRE_VALIDATION);
+        assertThat(testSiPlanPassation.getReferenceValidation()).isEqualTo(UPDATED_REFERENCE_VALIDATION);
+        assertThat(testSiPlanPassation.getFichierValidation()).isEqualTo(UPDATED_FICHIER_VALIDATION);
+        assertThat(testSiPlanPassation.getFichierValidationContentType()).isEqualTo(UPDATED_FICHIER_VALIDATION_CONTENT_TYPE);
+        assertThat(testSiPlanPassation.getDateValidation2()).isEqualTo(UPDATED_DATE_VALIDATION_2);
+        assertThat(testSiPlanPassation.getDateRejet()).isEqualTo(UPDATED_DATE_REJET);
+        assertThat(testSiPlanPassation.getDatePublication()).isEqualTo(UPDATED_DATE_PUBLICATION);
+        assertThat(testSiPlanPassation.getCommentairePublication()).isEqualTo(UPDATED_COMMENTAIRE_PUBLICATION);
     }
 
     @Test
     @Transactional
-    public void updateNonExistingPlanPassation() throws Exception {
-        int databaseSizeBeforeUpdate = planPassationRepository.findAll().size();
+    public void updateNonExistingSiPlanPassation() throws Exception {
+        int databaseSizeBeforeUpdate = siPlanPassationRepository.findAll().size();
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restPlanPassationMockMvc.perform(put("/api/plan-passations")
+        restSiPlanPassationMockMvc.perform(put("/api/si-plan-passations")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(planPassation)))
+            .content(TestUtil.convertObjectToJsonBytes(siPlanPassation)))
             .andExpect(status().isBadRequest());
 
-        // Validate the PlanPassation in the database
-        List<PlanPassation> planPassationList = planPassationRepository.findAll();
-        assertThat(planPassationList).hasSize(databaseSizeBeforeUpdate);
+        // Validate the SiPlanPassation in the database
+        List<SiPlanPassation> siPlanPassationList = siPlanPassationRepository.findAll();
+        assertThat(siPlanPassationList).hasSize(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
-    public void deletePlanPassation() throws Exception {
+    public void deleteSiPlanPassation() throws Exception {
         // Initialize the database
-        planPassationRepository.saveAndFlush(planPassation);
+        siPlanPassationService.save(siPlanPassation);
 
-        int databaseSizeBeforeDelete = planPassationRepository.findAll().size();
+        int databaseSizeBeforeDelete = siPlanPassationRepository.findAll().size();
 
-        // Delete the planPassation
-        restPlanPassationMockMvc.perform(delete("/api/plan-passations/{id}", planPassation.getId())
+        // Delete the siPlanPassation
+        restSiPlanPassationMockMvc.perform(delete("/api/si-plan-passations/{id}", siPlanPassation.getId())
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
-        List<PlanPassation> planPassationList = planPassationRepository.findAll();
-        assertThat(planPassationList).hasSize(databaseSizeBeforeDelete - 1);
+        List<SiPlanPassation> siPlanPassationList = siPlanPassationRepository.findAll();
+        assertThat(siPlanPassationList).hasSize(databaseSizeBeforeDelete - 1);
     }
 }

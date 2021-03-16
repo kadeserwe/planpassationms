@@ -1,6 +1,13 @@
 {
-  "name": "PlanPassation",
+  "name": "SiPlanPassation",
   "fields": [
+    {
+      "fieldName": "numeroPlan",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
     {
       "fieldName": "dateDebut",
       "fieldType": "LocalDate"
@@ -97,25 +104,19 @@
     {
       "fieldName": "commentairePublication",
       "fieldType": "String"
-    },
-    {
-      "fieldName": "numPlan",
-      "fieldType": "String"
     }
   ],
   "relationships": [],
-  "changelogDate": "20210112112931",
-  "entityTableName": "plan_passation",
+  "changelogDate": "20210202092718",
+  "entityTableName": "si_plan_passation",
   "dto": "no",
-  "pagination": "no",
-  "service": "no",
+  "pagination": "pagination",
+  "service": "serviceClass",
   "jpaMetamodelFiltering": false,
   "fluentMethods": true,
   "readOnly": false,
   "embedded": false,
   "clientRootFolder": "planpassationms",
   "applications": "*",
-  "microserviceName": "planpassationms",
-  "searchEngine": false,
-  "databaseType": "sql"
+  "microserviceName": "planpassationms"
 }

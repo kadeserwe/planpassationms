@@ -4,24 +4,24 @@
   "relationships": [],
   "fields": [
     {
-      "fieldName": "tableName",
+      "fieldName": "nomTable",
       "fieldType": "String",
       "fieldValidateRules": ["maxlength"],
-      "fieldValidateRulesMaxlength": "100"
+      "fieldValidateRulesMaxlength": "50"
     },
     {
-      "fieldName": "currentValue",
+      "fieldName": "valeurCourant",
       "fieldType": "Long"
     }
   ],
-  "changelogDate": "20210126132140",
+  "changelogDate": "20210118134821",
   "dto": "no",
   "searchEngine": false,
   "service": "no",
-  "entityTableName": "conf_gen_sequence",
+  "entityTableName": "sequance_generator",
   "databaseType": "sql",
   "readOnly": false,
   "jpaMetamodelFiltering": false,
-  "pagination": "pagination",
+  "pagination": "no",
   "microserviceName": "planpassationms"
 }

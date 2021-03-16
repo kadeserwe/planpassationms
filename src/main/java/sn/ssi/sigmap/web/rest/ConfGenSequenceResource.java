@@ -1,7 +1,7 @@
 package sn.ssi.sigmap.web.rest;
 
 import sn.ssi.sigmap.domain.ConfGenSequence;
-import sn.ssi.sigmap.service.ConfGenSequenceService;
+import sn.ssi.sigmap.repository.ConfGenSequenceRepository;
 import sn.ssi.sigmap.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,6 +30,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
+@Transactional
 public class ConfGenSequenceResource {
 
     private final Logger log = LoggerFactory.getLogger(ConfGenSequenceResource.class);
@@ -38,10 +40,10 @@ public class ConfGenSequenceResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final ConfGenSequenceService confGenSequenceService;
+    private final ConfGenSequenceRepository confGenSequenceRepository;
 
-    public ConfGenSequenceResource(ConfGenSequenceService confGenSequenceService) {
-        this.confGenSequenceService = confGenSequenceService;
+    public ConfGenSequenceResource(ConfGenSequenceRepository confGenSequenceRepository) {
+        this.confGenSequenceRepository = confGenSequenceRepository;
     }
 
     /**
@@ -57,7 +59,7 @@ public class ConfGenSequenceResource {
         if (confGenSequence.getId() != null) {
             throw new BadRequestAlertException("A new confGenSequence cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        ConfGenSequence result = confGenSequenceService.save(confGenSequence);
+        ConfGenSequence result = confGenSequenceRepository.save(confGenSequence);
         return ResponseEntity.created(new URI("/api/conf-gen-sequences/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -78,7 +80,7 @@ public class ConfGenSequenceResource {
         if (confGenSequence.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        ConfGenSequence result = confGenSequenceService.save(confGenSequence);
+        ConfGenSequence result = confGenSequenceRepository.save(confGenSequence);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, confGenSequence.getId().toString()))
             .body(result);
@@ -93,7 +95,7 @@ public class ConfGenSequenceResource {
     @GetMapping("/conf-gen-sequences")
     public ResponseEntity<List<ConfGenSequence>> getAllConfGenSequences(Pageable pageable) {
         log.debug("REST request to get a page of ConfGenSequences");
-        Page<ConfGenSequence> page = confGenSequenceService.findAll(pageable);
+        Page<ConfGenSequence> page = confGenSequenceRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -107,7 +109,7 @@ public class ConfGenSequenceResource {
     @GetMapping("/conf-gen-sequences/{id}")
     public ResponseEntity<ConfGenSequence> getConfGenSequence(@PathVariable Long id) {
         log.debug("REST request to get ConfGenSequence : {}", id);
-        Optional<ConfGenSequence> confGenSequence = confGenSequenceService.findOne(id);
+        Optional<ConfGenSequence> confGenSequence = confGenSequenceRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(confGenSequence);
     }
 
@@ -120,7 +122,7 @@ public class ConfGenSequenceResource {
     @DeleteMapping("/conf-gen-sequences/{id}")
     public ResponseEntity<Void> deleteConfGenSequence(@PathVariable Long id) {
         log.debug("REST request to delete ConfGenSequence : {}", id);
-        confGenSequenceService.delete(id);
+        confGenSequenceRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }
